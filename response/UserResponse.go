@@ -1,0 +1,84 @@
+package response
+
+import (
+	"_039_projeto3/db"
+	"_039_projeto3/helper"
+	"encoding/json"
+	"errors"
+	"io"
+	"log/slog"
+	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi"
+)
+
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "GET" {
+		slog.Error("Error with the method", "Error", "The method needs to be GET")
+		return
+	}
+
+	res, err := db.GetAllUsers()
+
+	if err != nil {
+		slog.Error("Error to enter in the db", "Error", err)
+		return
+	}
+
+	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
+}
+
+func GetByID(w http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	if r.Method != "GET" {
+		slog.Error("Error with the method", "Error", "The method needs to be GET")
+		return
+	}
+
+	idInt, _ := strconv.Atoi(id)
+	res, err := db.GetByID(idInt)
+
+	if err != nil {
+		slog.Error("Error to enter in the db", "Error", err)
+		return
+	}
+
+	if (res == db.User{}) {
+		helper.Response(helper.Response_struct{Error: "This user not exists on DB"}, w, http.StatusNotFound)
+		return
+	}
+
+	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
+}
+
+func AddUser(w http.ResponseWriter, r *http.Request) {
+	r.Body = http.MaxBytesReader(w, r.Body, 1000)
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		var maxErr *http.MaxBytesError
+		if errors.As(err, &maxErr) {
+			helper.Response(helper.Response_struct{Error: "Body too large"}, w, http.StatusRequestEntityTooLarge)
+			return
+		}
+		slog.Error("failed to read request body", "error", err)
+		helper.Response(helper.Response_struct{Error: "something went wrong"}, w, http.StatusInternalServerError)
+		return
+	}
+
+	var user db.User
+	if err := json.Unmarshal(data, &user); err != nil {
+		helper.Response(helper.Response_struct{Error: "invalid JSON body"}, w, http.StatusUnprocessableEntity)
+		return
+	}
+
+	newUser, err := db.AddUser(user)
+	if err != nil {
+		helper.Response(helper.Response_struct{Error: "failed to add user"}, w, http.StatusInternalServerError)
+		return
+	}
+
+	helper.Response(helper.Response_struct{Data: newUser}, w, http.StatusCreated)
+}

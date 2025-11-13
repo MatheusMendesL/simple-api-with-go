@@ -1,0 +1,16 @@
+package api
+
+import (
+	"_039_projeto3/response"
+
+	"github.com/go-chi/chi"
+)
+
+func UserRoutes(r chi.Router) {
+
+	r.Route("/user", func(r chi.Router) {
+		r.Get("/", response.GetAllUsers)
+		r.Get("/{id}", response.GetByID)
+		r.Post("/", response.AddUser)
+	})
+}

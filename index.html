@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>teste das rotas da api</title>
+</head>
+
+<body>
+
+    <h1>Escolha um usuario para editar!</h1>
+    <ul id="list">
+
+    </ul>
+
+    <h1>Para adicionar um usuario</h1>
+    <form id="UserForm">
+        <input type="text" placeholder="name" name="FirstName">
+        <input type="text" placeholder="ultimo nome" name="LastName">
+        <input type="text" placeholder="biografia" name="Biography">
+        <button type="submit" id="send">Enviar</button>
+    </form>
+
+</body>
+
+<script>
+
+
+    document.addEventListener("DOMContentLoaded", async () => {
+
+        const res = await fetch("http://localhost:8080/api/user/", {
+            method: "GET"
+        })
+
+        const data = await res.json()
+        const list = document.querySelector("#list")
+
+
+        Object.values(data.data).forEach(u => {
+            li = document.createElement("li")
+            li.id = u.Id
+            li.innerText = u.FirstName
+            list.appendChild(li)
+        });
+
+    });
+
+    document.querySelector("#UserForm").addEventListener("submit", async (e) => {
+
+        const data = {
+            FirstName: e.target.FirstName.value,
+            LastName: e.target.LastName.value,
+            Biography: e.target.Biography.value
+        };
+
+
+        const res = await fetch("http://localhost:8080/api/user/", {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        console.log(result);
+
+    })
+
+
+
+</script>
+
+</html>
