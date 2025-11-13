@@ -44,3 +44,37 @@ func AddUser(u User) (User, error) {
 
 	return u, nil
 }
+
+func EditUser(id int, u User) (User, error) {
+	existing, exists := users[id]
+	if !exists {
+		slog.Error("User not found")
+		return User{}, nil
+	}
+
+	if u.FirstName != "" {
+		existing.FirstName = u.FirstName
+	}
+	if u.LastName != "" {
+		existing.LastName = u.LastName
+	}
+	if u.Biography != "" {
+		existing.Biography = u.Biography
+	}
+
+	users[id] = existing
+
+	return existing, nil
+}
+
+func DeleteUser(id int) error {
+	_, exist := users[id]
+	if !exist {
+		slog.Error("User not found")
+		return nil
+	}
+
+	delete(users, id)
+
+	return nil
+}

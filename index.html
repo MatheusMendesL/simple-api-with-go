@@ -8,18 +8,30 @@
 </head>
 
 <body>
+    <div class="Users">
+        <h1>Choose one user to edit!</h1>
+        <ul id="list">
 
-    <h1>Choose one user to edit!</h1>
-    <ul id="list">
+        </ul>
 
-    </ul>
+        <form id="EditForm">
+            <input type="text" placeholder="First Name" name="FirstName">
+            <input type="text" placeholder="Last Name" name="LastName">
+            <input type="text" placeholder="Biography" name="Biography">
+            <button type="submit" id="edit">Edit</button>
+        </form>
 
-    <h1>Para adicionar um usuario</h1>
+
+        <h1>Click in one of the names and here to delete</h1>
+
+        <button id="Delete">Delete</button>
+    </div>
+    <h1>To add an User</h1>
     <form id="UserForm">
-        <input type="text" placeholder="name" name="FirstName">
-        <input type="text" placeholder="ultimo nome" name="LastName">
-        <input type="text" placeholder="biografia" name="Biography">
-        <button type="submit" id="send">Enviar</button>
+        <input type="text" placeholder="First Name" name="FirstName">
+        <input type="text" placeholder="Last Name" name="LastName">
+        <input type="text" placeholder="Biography" name="Biography">
+        <button type="submit" id="send">Send</button>
     </form>
 
 </body>
@@ -35,13 +47,46 @@
 
         const data = await res.json()
         const list = document.querySelector("#list")
-
+        console.log(data.data)
+        if (Object.keys(data.data).length === 0) {
+            document.querySelector(".Users").style.display = "none"
+        }
 
         Object.values(data.data).forEach(u => {
             li = document.createElement("li")
             li.id = u.Id
             li.innerText = u.FirstName
             list.appendChild(li)
+            li.addEventListener("click", () => {
+
+                document.querySelector("#Delete").addEventListener("click", async (e) => {
+                    const res = await fetch("http://localhost:8080/api/user/" + u.Id, {
+                        method: "DELETE"
+                    });
+
+                    const result = await res.json();
+                    console.log(result);
+                    location.reload()
+                })
+
+                document.querySelector("#EditForm").addEventListener("submit", async (e) => {
+                    const data = {
+                        FirstName: e.target.FirstName.value,
+                        LastName: e.target.LastName.value,
+                        Biography: e.target.Biography.value
+                    };
+
+
+                    const res = await fetch("http://localhost:8080/api/user/" + u.Id, {
+                        method: "PUT",
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await res.json();
+                    console.log(result);
+
+                })
+            })
         });
 
     });
