@@ -13,7 +13,7 @@ type User struct {
 
 var users = map[int]User{
 	1: {Id: 1, FirstName: "Matheus", LastName: "Lopes", Biography: "Matheus is cool"},
-	2: {Id: 2, FirstName: "Ana", LastName: "Silva", Biography: "Ana likes Go"},
+	2: {Id: 2, FirstName: "André", LastName: "Silva", Biography: "Ana likes Go"},
 }
 
 func GetAllUsers() (map[int]User, error) {
