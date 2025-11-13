@@ -55,6 +55,12 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+		slog.Error("Error with the method", "Error", "The method needs to be POST")
+		return
+	}
+
 	r.Body = http.MaxBytesReader(w, r.Body, 1000)
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -84,10 +90,18 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditUser(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "PUT" {
+		slog.Error("Error with the method", "Error", "The method needs to be PUT")
+		return
+	}
+
 	idStr := chi.URLParam(r, "id")
 	idInt, _ := strconv.Atoi(idStr)
+
 	r.Body = http.MaxBytesReader(w, r.Body, 1000)
 	data, err := io.ReadAll(r.Body)
+
 	if err != nil {
 		var maxErr *http.MaxBytesError
 		if errors.As(err, &maxErr) {
@@ -115,6 +129,12 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "DELETE" {
+		slog.Error("Error with the method", "Error", "The method needs to be DELETE")
+		return
+	}
+
 	idStr := chi.URLParam(r, "id")
 	idInt, _ := strconv.Atoi(idStr)
 
@@ -123,5 +143,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		helper.Response(helper.Response_struct{Error: "failed to delete user"}, w, http.StatusInternalServerError)
 		return
 	}
+
 	helper.Response(helper.Response_struct{Data: "User deleted"}, w, http.StatusCreated)
+}
+
+func SearchUser(w http.ResponseWriter, r *http.Request) {
+
 }

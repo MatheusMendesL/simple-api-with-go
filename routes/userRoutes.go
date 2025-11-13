@@ -14,5 +14,6 @@ func UserRoutes(r chi.Router) {
 		r.Post("/", response.AddUser)
 		r.Put("/{id}", response.EditUser)
 		r.Delete("/{id}", response.DeleteUser)
+		r.Get("/search/{name}", response.SearchUser)
 	})
 }

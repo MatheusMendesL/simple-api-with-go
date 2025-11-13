@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div class="Users">
+    <div class="Users" style="display: none;">
         <h1>Choose one user to edit!</h1>
         <ul id="list">
 
@@ -34,6 +34,12 @@
         <button type="submit" id="send">Send</button>
     </form>
 
+
+    <h1>To search one user, write his name</h1>
+    <form id="SearchForm">
+        <input type="text" placeholder="Name" name="FirstName">
+        <button type="submit" id="send">Search</button>
+    </form>
 </body>
 
 <script>
@@ -48,8 +54,8 @@
         const data = await res.json()
         const list = document.querySelector("#list")
         console.log(data.data)
-        if (Object.keys(data.data).length === 0) {
-            document.querySelector(".Users").style.display = "none"
+        if (Object.keys(data.data).length !== 0 ) {
+            document.querySelector(".Users").style.display = "block"
         }
 
         Object.values(data.data).forEach(u => {
