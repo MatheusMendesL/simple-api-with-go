@@ -38,8 +38,13 @@
     <h1>To search one user, write his name</h1>
     <form id="SearchForm">
         <input type="text" placeholder="Name" name="FirstName">
-        <button type="submit" id="send">Search</button>
+        <button type="submit" id="search">Search</button>
     </form>
+
+    <ul id="listInfo">
+
+    </ul>
+
 </body>
 
 <script>
@@ -54,7 +59,7 @@
         const data = await res.json()
         const list = document.querySelector("#list")
         console.log(data.data)
-        if (Object.keys(data.data).length !== 0 ) {
+        if (Object.keys(data.data).length !== 0) {
             document.querySelector(".Users").style.display = "block"
         }
 
@@ -114,6 +119,39 @@
         const result = await res.json();
         console.log(result);
 
+    })
+
+
+    document.querySelector("#SearchForm").addEventListener("submit", async (e) => {
+        e.preventDefault()
+        var FirstName = e.target.FirstName.value
+
+
+        const res = await fetch("http://localhost:8080/api/user/search/" + FirstName)
+
+        const result = await res.json()
+
+        if (result.data.Id == 0){
+            return 
+        }
+
+        const listInfo = document.querySelector("#listInfo")
+
+        li = document.createElement("li")
+        li.id = result.data.Id
+        li.innerText = `First name:  ${result.data.FirstName}`
+
+        li2 = document.createElement("li")
+        li2.id = result.data.Id
+        li2.innerText = `Last name:  ${result.data.LastName}`
+
+        li3 = document.createElement("li")
+        li3.id = result.data.Id
+        li3.innerText = `Biography:  ${result.data.Biography}`
+
+        listInfo.appendChild(li)
+        listInfo.appendChild(li2)
+        listInfo.appendChild(li3)
     })
 
 

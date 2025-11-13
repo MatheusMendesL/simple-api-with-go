@@ -30,6 +30,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
 }
 
+// tlvz seja inutil
 func GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
@@ -148,5 +149,19 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		slog.Error("Error with the method", "Error", "The method needs to be GET")
+		return
+	}
 
+	name := chi.URLParam(r, "name")
+
+	data, err := db.SearchUser(name)
+
+	if err != nil {
+		helper.Response(helper.Response_struct{Error: "failed to search user"}, w, http.StatusInternalServerError)
+		return
+	}
+
+	helper.Response(helper.Response_struct{Data: data}, w, http.StatusOK)
 }

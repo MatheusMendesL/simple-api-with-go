@@ -13,7 +13,7 @@ type User struct {
 
 var users = map[int]User{
 	1: {Id: 1, FirstName: "Matheus", LastName: "Lopes", Biography: "Matheus is cool"},
-	2: {Id: 2, FirstName: "André", LastName: "Silva", Biography: "Ana likes Go"},
+	2: {Id: 2, FirstName: "André", LastName: "Silva", Biography: "André likes Go"},
 }
 
 func GetAllUsers() (map[int]User, error) {
@@ -68,8 +68,8 @@ func EditUser(id int, u User) (User, error) {
 }
 
 func DeleteUser(id int) error {
-	_, exist := users[id]
-	if !exist {
+	_, exists := users[id]
+	if !exists {
 		slog.Error("User not found")
 		return nil
 	}
@@ -77,4 +77,17 @@ func DeleteUser(id int) error {
 	delete(users, id)
 
 	return nil
+}
+
+func SearchUser(name string) (User, error) {
+
+	for _, u := range users {
+
+		if u.FirstName == name {
+			return u, nil
+		}
+	}
+
+	slog.Error("User not found")
+	return User{}, nil
 }
