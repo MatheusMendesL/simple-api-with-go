@@ -1,4 +1,4 @@
-module _039_projeto3
+module _046_project
 
 go 1.25.3
 

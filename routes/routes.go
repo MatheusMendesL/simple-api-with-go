@@ -1,7 +1,7 @@
 package api
 
 import (
-	"_039_projeto3/middle"
+	"_046_project/middle"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
