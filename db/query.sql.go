@@ -114,3 +114,19 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 	)
 	return err
 }
+
+const searchByName = `-- name: SearchByName :one
+SELECT id, firstname, lastname, biography FROM user WHERE Firstname = ?
+`
+
+func (q *Queries) SearchByName(ctx context.Context, firstname string) (User, error) {
+	row := q.db.QueryRowContext(ctx, searchByName, firstname)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Firstname,
+		&i.Lastname,
+		&i.Biography,
+	)
+	return i, err
+}

@@ -20,7 +20,7 @@ WHERE ID = ?;
 -- name: UpdateUser :exec
 UPDATE user 
 SET Firstname = ?, LastName = ?, Biography = ?
-WHERE ID = ?
+WHERE ID = ?;
 
--- name: SearchByName :exec 
-SELECT * FROM user WHERE Firstname = ?
+-- name: SearchByName :one 
+SELECT * FROM user WHERE Firstname = ?;

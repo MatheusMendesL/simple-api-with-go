@@ -4,11 +4,19 @@ import (
 	"_046_project/db"
 	"_046_project/helper"
 	"context"
+	"database/sql"
+	"encoding/json"
+	"errors"
+	"io"
 	"log/slog"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 var _, queries, errDB = db.Conn()
+var ctx = context.Background()
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
@@ -22,46 +30,40 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.Background()
-
 	res, err := queries.ListUser(ctx)
 
 	if err != nil {
 		slog.Error("Error to do the query", "Error", err)
 	}
 
-	slog.Info("chegou aq")
-
 	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
 }
 
-/* // tlvz seja inutil
 func GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
-	if r.Method != "GET" {
-		slog.Error("Error with the method", "Error", "The method needs to be GET")
+	idInt, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		slog.Error("failed to parse id", "err", err, "raw_id", id)
+		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
 
-	idInt, _ := strconv.Atoi(id)
-	idInt = idInt
-	 res, err := (idInt)
+	slog.Info("PARSED_ID", "idInt", idInt)
+	res, err := queries.GetUser(ctx, idInt)
 
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			helper.Response(helper.Response_struct{Data: "This user is not on the db"}, w, http.StatusNotFound)
+		}
 		slog.Error("Error to enter in the db", "Error", err)
 		return
 	}
 
-	if (res == db.User{}) {
-		helper.Response(helper.Response_struct{Error: "This user not exists on DB"}, w, http.StatusNotFound)
-		return
-	}
+	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
+}
 
-	helper.Response(helper.Response_struct{Data: /* res  "aa"}, w, http.StatusOK)
-} */
-
-/* func AddUser(w http.ResponseWriter, r *http.Request) {
+func AddUser(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {
 		slog.Error("Error with the method", "Error", "The method needs to be POST")
@@ -87,13 +89,16 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUser, err := db.AddUser(user)
+	res, err := queries.CreateUser(ctx, db.CreateUserParams{
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Biography: user.Biography})
 	if err != nil {
 		helper.Response(helper.Response_struct{Error: "failed to add user"}, w, http.StatusInternalServerError)
 		return
 	}
 
-	helper.Response(helper.Response_struct{Data: newUser}, w, http.StatusCreated)
+	helper.Response(helper.Response_struct{Data: res}, w, http.StatusCreated)
 }
 
 func EditUser(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +110,8 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 
 	idStr := chi.URLParam(r, "id")
 	idInt, _ := strconv.Atoi(idStr)
+
+	slog.Info("ids", idStr, idInt)
 
 	r.Body = http.MaxBytesReader(w, r.Body, 1000)
 	data, err := io.ReadAll(r.Body)
@@ -126,13 +133,17 @@ func EditUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	EditedUser, err := db.EditUser(idInt, user)
-	if err != nil {
-		helper.Response(helper.Response_struct{Error: "failed to add user"}, w, http.StatusInternalServerError)
+	if err := queries.UpdateUser(ctx, db.UpdateUserParams{
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Biography: user.Biography,
+		ID:        int64(idInt),
+	}); err != nil {
+		helper.Response(helper.Response_struct{Error: "failed to edit user"}, w, http.StatusInternalServerError)
 		return
 	}
 
-	helper.Response(helper.Response_struct{Data: EditedUser}, w, http.StatusCreated)
+	helper.Response(helper.Response_struct{Data: "User edited"}, w, http.StatusCreated)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -143,10 +154,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	idStr := chi.URLParam(r, "id")
-	idInt, _ := strconv.Atoi(idStr)
+	idInt, _ := strconv.ParseInt(idStr, 10, 64)
 
-	err := db.DeleteUser(idInt)
-	if err != nil {
+	if err := queries.DeleteUser(ctx, idInt); err != nil {
 		helper.Response(helper.Response_struct{Error: "failed to delete user"}, w, http.StatusInternalServerError)
 		return
 	}
@@ -162,13 +172,16 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 
 	name := chi.URLParam(r, "name")
 
-	data, err := db.SearchUser(name)
+	data, err := queries.SearchByName(ctx, name)
 
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			helper.Response(helper.Response_struct{Data: "This user is not on the db"}, w, http.StatusNotFound)
+			return
+		}
 		helper.Response(helper.Response_struct{Error: "failed to search user"}, w, http.StatusInternalServerError)
 		return
 	}
 
 	helper.Response(helper.Response_struct{Data: data}, w, http.StatusOK)
 }
-*/

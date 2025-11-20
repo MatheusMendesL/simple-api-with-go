@@ -34,100 +34,108 @@
         <button type="submit" id="send">Send</button>
     </form>
 
+    <div class="Users" style="display: none;">
+        <h1>To search one user, write his name</h1>
+        <form id="SearchForm">
+            <input type="text" placeholder="Name" name="FirstName">
+            <button type="submit" id="search">Search</button>
+        </form>
 
-    <h1>To search one user, write his name</h1>
-    <form id="SearchForm">
-        <input type="text" placeholder="Name" name="FirstName">
-        <button type="submit" id="search">Search</button>
-    </form>
+        <ul id="listInfo">
 
-    <ul id="listInfo">
-
-    </ul>
-
+        </ul>
+    </div>
 </body>
 
 <script>
 
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    async function loadUsers() {
+        const res = await fetch("http://localhost:8080/api/user/");
+        const data = await res.json();
 
-        const res = await fetch("http://localhost:8080/api/user/", {
-            method: "GET"
-        })
+        const list = document.querySelector("#list");
+        list.innerHTML = "";
 
-        const data = await res.json()
-        const list = document.querySelector("#list")
-        console.log(data.data)
         if (Object.keys(data.data).length !== 0) {
-            document.querySelector(".Users").style.display = "block"
+            const divs = document.querySelectorAll(".Users")
+            divs.forEach(d => {
+                d.style.display = "block"
+            })
         }
 
         Object.values(data.data).forEach(u => {
-            li = document.createElement("li")
-            li.id = u.Id
-            li.innerText = u.FirstName
-            list.appendChild(li)
+            const li = document.createElement("li");
+            li.id = u.ID;
+            li.innerText = u.Firstname;
+
             li.addEventListener("click", () => {
+                selectedID = u.ID;
+            });
 
-                document.querySelector("#Delete").addEventListener("click", async (e) => {
-                    const res = await fetch("http://localhost:8080/api/user/" + u.Id, {
-                        method: "DELETE"
-                    });
-
-                    const result = await res.json();
-                    console.log(result);
-                    location.reload()
-                })
-
-                document.querySelector("#EditForm").addEventListener("submit", async (e) => {
-                    const data = {
-                        FirstName: e.target.FirstName.value,
-                        LastName: e.target.LastName.value,
-                        Biography: e.target.Biography.value
-                    };
-
-
-                    const res = await fetch("http://localhost:8080/api/user/" + u.Id, {
-                        method: "PUT",
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await res.json();
-                    console.log(result);
-
-                })
-            })
+            list.appendChild(li);
         });
+    }
 
-    });
+    document.addEventListener("DOMContentLoaded", loadUsers);
+
 
     document.querySelector("#UserForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
         const data = {
-            FirstName: e.target.FirstName.value,
-            LastName: e.target.LastName.value,
+            Firstname: e.target.FirstName.value,
+            Lastname: e.target.LastName.value,
             Biography: e.target.Biography.value
         };
 
-
-        const res = await fetch("http://localhost:8080/api/user/", {
+        await fetch("http://localhost:8080/api/user/", {
             method: "POST",
             body: JSON.stringify(data)
         });
+        
+        e.target.reset()
+        loadUsers();
+    });
 
-        const result = await res.json();
-        console.log(result);
+    document.querySelector("#EditForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    })
+        const data = {
+            Firstname: e.target.FirstName.value,
+            Lastname: e.target.LastName.value,
+            Biography: e.target.Biography.value
+        };
+
+        await fetch("http://localhost:8080/api/user/" + selectedID, {
+            method: "PUT",
+            body: JSON.stringify(data)
+        });
+        e.target.reset()
+        loadUsers();
+    });
+
+    document.querySelector("#Delete").addEventListener("click", async () => {
+        if (!selectedID) return;
+
+        await fetch("http://localhost:8080/api/user/" + selectedID, {
+            method: "DELETE"
+        });
+
+        selectedID = null;
+        loadUsers();
+    });
+
+
+    document.addEventListener("DOMContentLoaded", loadUsers)
 
 
     document.querySelector("#SearchForm").addEventListener("submit", async (e) => {
         e.preventDefault()
-        var FirstName = e.target.FirstName.value
+        var Firstname = e.target.FirstName.value
 
 
-        const res = await fetch("http://localhost:8080/api/user/search/" + FirstName)
+        const res = await fetch("http://localhost:8080/api/user/search/" + Firstname)
 
         const result = await res.json()
 
@@ -136,17 +144,17 @@
         }
 
         const listInfo = document.querySelector("#listInfo")
-
+        listInfo.innerHTML = ""
         li = document.createElement("li")
-        li.id = result.data.Id
-        li.innerText = `First name:  ${result.data.FirstName}`
+        li.id = result.data.ID
+        li.innerText = `First name:  ${result.data.Firstname}`
 
         li2 = document.createElement("li")
-        li2.id = result.data.Id
-        li2.innerText = `Last name:  ${result.data.LastName}`
+        li2.id = result.data.ID
+        li2.innerText = `Last name:  ${result.data.Lastname}`
 
         li3 = document.createElement("li")
-        li3.id = result.data.Id
+        li3.id = result.data.ID
         li3.innerText = `Biography:  ${result.data.Biography}`
 
         listInfo.appendChild(li)

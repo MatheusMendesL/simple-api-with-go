@@ -3,8 +3,8 @@ package api
 import (
 	"_046_project/middle"
 
-	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
 )
 
 // define the routes to the project and calls the handle to check
