@@ -3,15 +3,12 @@ package response
 import (
 	"_046_project/db"
 	"_046_project/helper"
-	"encoding/json"
-	"errors"
-	"io"
+	"context"
 	"log/slog"
 	"net/http"
-	"strconv"
-
-	"github.com/go-chi/chi"
 )
+
+var _, queries, errDB = db.Conn()
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
@@ -20,17 +17,25 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := db.GetAllUsers()
-
-	if err != nil {
-		slog.Error("Error to enter in the db", "Error", err)
+	if errDB != nil {
+		slog.Error("Error to enter in the db", "Error", errDB)
 		return
 	}
+
+	ctx := context.Background()
+
+	res, err := queries.ListUser(ctx)
+
+	if err != nil {
+		slog.Error("Error to do the query", "Error", err)
+	}
+
+	slog.Info("chegou aq")
 
 	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
 }
 
-// tlvz seja inutil
+/* // tlvz seja inutil
 func GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
@@ -40,7 +45,8 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	idInt, _ := strconv.Atoi(id)
-	res, err := db.GetByID(idInt)
+	idInt = idInt
+	 res, err := (idInt)
 
 	if err != nil {
 		slog.Error("Error to enter in the db", "Error", err)
@@ -52,10 +58,10 @@ func GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helper.Response(helper.Response_struct{Data: res}, w, http.StatusOK)
-}
+	helper.Response(helper.Response_struct{Data: /* res  "aa"}, w, http.StatusOK)
+} */
 
-func AddUser(w http.ResponseWriter, r *http.Request) {
+/* func AddUser(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {
 		slog.Error("Error with the method", "Error", "The method needs to be POST")
@@ -165,3 +171,4 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 
 	helper.Response(helper.Response_struct{Data: data}, w, http.StatusOK)
 }
+*/

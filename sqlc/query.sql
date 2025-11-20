@@ -4,7 +4,7 @@ WHERE ID = ? LIMIT 1;
 
 -- name: ListUser :many
 SELECT * FROM user
-ORDER BY name;
+ORDER BY Firstname;
 
 -- name: CreateUser :execresult
 INSERT INTO user (
@@ -17,7 +17,10 @@ INSERT INTO user (
 DELETE FROM user
 WHERE ID = ?;
 
--- update
+-- name: UpdateUser :exec
 UPDATE user 
 SET Firstname = ?, LastName = ?, Biography = ?
 WHERE ID = ?
+
+-- name: SearchByName :exec 
+SELECT * FROM user WHERE Firstname = ?

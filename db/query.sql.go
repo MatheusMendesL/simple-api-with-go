@@ -46,18 +46,19 @@ WHERE ID = ? LIMIT 1
 func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
-	err := row.Scan(
-		&i.ID,
+
+	scan := []any{&i.ID,
 		&i.Firstname,
 		&i.Lastname,
-		&i.Biography,
-	)
+		&i.Biography}
+
+	err := row.Scan(scan...)
 	return i, err
 }
 
 const listUser = `-- name: ListUser :many
 SELECT id, firstname, lastname, biography FROM user
-ORDER BY name
+ORDER BY Firstname
 `
 
 func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
@@ -69,14 +70,17 @@ func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(
-			&i.ID,
+		scan := []any{&i.ID,
 			&i.Firstname,
 			&i.Lastname,
-			&i.Biography,
+			&i.Biography}
+
+		if err := rows.Scan(
+			scan...,
 		); err != nil {
 			return nil, err
 		}
+
 		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
@@ -86,4 +90,27 @@ func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateUser = `-- name: UpdateUser :exec
+UPDATE user 
+SET Firstname = ?, LastName = ?, Biography = ?
+WHERE ID = ?
+`
+
+type UpdateUserParams struct {
+	Firstname string
+	Lastname  string
+	Biography string
+	ID        int64
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser,
+		arg.Firstname,
+		arg.Lastname,
+		arg.Biography,
+		arg.ID,
+	)
+	return err
 }
