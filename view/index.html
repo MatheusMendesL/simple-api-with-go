@@ -10,6 +10,21 @@
 </head>
 
 <body>
+
+
+    <div class="container-fluid container-main bg-dark d-flex justify-content-center align-items-center">
+        <div class="row">
+            <h2 class="text-light">What do you want to do?</h2>
+            <div class="col d-flex flex-column gap-3">
+                <button class="btn btn-primary" id="list_users">List users</button>
+                <button class="btn btn-secondary" id="add_user">Add an user</button>
+                <button class="btn btn-light">Search an user by name</button>
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="Users" style="display: none;">
         <h1>Choose one user to edit!</h1>
         <ul id="list">
@@ -28,15 +43,19 @@
 
         <button id="Delete">Delete</button>
     </div>
-    <h1>To add an User</h1>
-    <form id="UserForm">
-        <input type="text" placeholder="First Name" name="FirstName">
-        <input type="text" placeholder="Last Name" name="LastName">
-        <input type="text" placeholder="Biography" name="Biography">
-        <button type="submit" id="send">Send</button>
-    </form>
 
-    <div class="Users" style="display: none;">
+    <div class="addUser" style="display: none;">
+        <h1>To add an User</h1>
+        <form id="UserForm">
+            <input type="text" placeholder="First Name" name="FirstName">
+            <input type="text" placeholder="Last Name" name="LastName">
+            <input type="text" placeholder="Biography" name="Biography">
+            <button type="submit" id="send">Send</button>
+        </form>
+    </div>
+
+
+    <div class="SearchUser" style="display: none;">
         <h1>To search one user, write his name</h1>
         <form id="SearchForm">
             <input type="text" placeholder="Name" name="FirstName">

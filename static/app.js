@@ -1,32 +1,39 @@
+document.querySelector("#list_users").addEventListener("click", loadUsers)
+document.querySelector("#add_user").addEventListener("click", UserForm)
+
 async function loadUsers() {
     const res = await fetch("http://localhost:8080/api/user/");
     const data = await res.json();
 
-    const list = document.querySelector("#list");
-    list.innerHTML = "";
+    console.log(data)
 
-    if (Object.keys(data.data).length !== 0) {
+    /*  const list = document.querySelector("#list");
+     list.innerHTML = ""; */
+
+    /* if (Object.keys(data.data).length !== 0) {
         const divs = document.querySelectorAll(".Users")
         divs.forEach(d => {
             d.style.display = "block"
         })
-    }
+    } */
 
-    Object.values(data.data).forEach(u => {
-        const li = document.createElement("li");
-        li.id = u.ID;
-        li.innerText = u.Firstname;
-
-        li.addEventListener("click", () => {
-            selectedID = u.ID;
-        });
-
-        list.appendChild(li);
-    });
+    /*  Object.values(data.data).forEach(u => {
+         const li = document.createElement("li");
+         li.id = u.ID;
+         li.innerText = u.Firstname;
+ 
+         li.addEventListener("click", () => {
+             selectedID = u.ID;
+         });
+ 
+         list.appendChild(li);
+     }); */
 }
 
-document.addEventListener("DOMContentLoaded", loadUsers);
-
+function UserForm() {
+    document.querySelector(".container-main").classList.add("d-none")
+    document.querySelector(".addUser").style.display = "block"
+}
 
 document.querySelector("#UserForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -46,7 +53,8 @@ document.querySelector("#UserForm").addEventListener("submit", async (e) => {
     loadUsers();
 });
 
-document.querySelector("#EditForm").addEventListener("submit", async (e) => {
+
+/* document.querySelector("#EditForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const data = {
@@ -73,9 +81,6 @@ document.querySelector("#Delete").addEventListener("click", async () => {
     selectedID = null;
     loadUsers();
 });
-
-
-document.addEventListener("DOMContentLoaded", loadUsers)
 
 
 document.querySelector("#SearchForm").addEventListener("submit", async (e) => {
@@ -109,3 +114,4 @@ document.querySelector("#SearchForm").addEventListener("submit", async (e) => {
     listInfo.appendChild(li2)
     listInfo.appendChild(li3)
 })
+ */
