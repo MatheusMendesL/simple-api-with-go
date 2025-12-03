@@ -11,7 +11,6 @@
 
 <body>
 
-
     <div class="container-fluid container-main bg-dark d-flex justify-content-center align-items-center">
         <div class="row">
             <h2 class="text-light">What do you want to do?</h2>
@@ -25,9 +24,9 @@
 
 
 
-    <div class="Users" style="display: none;">
-        <h1>Choose one user to edit!</h1>
-        <ul id="list">
+    <div class="users d-none bg-dark d-flex justify-content-center align-items-center">
+        <h1 class="text-light">Choose one user to edit!</h1>
+        <ul id="list" class="text-light">
 
         </ul>
 
@@ -39,21 +38,30 @@
         </form>
 
 
-        <h1>Click in one of the names and here to delete</h1>
+        <h1 class="text-light">Click in one of the names and here to delete</h1>
 
         <button id="Delete">Delete</button>
+        <div class="d-block"><button id="returnList" class="btn btn-danger">Return</button></div>
     </div>
 
-    <div class="addUser" style="display: none;">
-        <h1>To add an User</h1>
-        <form id="UserForm">
-            <input type="text" placeholder="First Name" name="FirstName">
-            <input type="text" placeholder="Last Name" name="LastName">
-            <input type="text" placeholder="Biography" name="Biography">
-            <button type="submit" id="send">Send</button>
-        </form>
+    <div class="d-none container-fluid container-add bg-dark d-flex justify-content-center align-items-center">
+        <div class="row">
+            <div class="addUser">
+                <h1 class="text-light">To add an User</h1>
+                <div class="col d-flex flex-column gap-3">
+                    <form id="UserForm" class="gap-5">
+                        <input type="text" placeholder="First Name" name="FirstName" class="form-control">
+                        <input type="text" placeholder="Last Name" name="LastName" class="form-control">
+                        <input type="text" placeholder="Biography" name="Biography" class="form-control">
+                        <div class="d-flex">
+                            <button type="submit" id="send" class="btn btn-secondary mt-2 w-50">Send</button>
+                            <button class="btn btn-danger mt-2 w-50" id="return">Return</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
 
     <div class="SearchUser" style="display: none;">
         <h1>To search one user, write his name</h1>

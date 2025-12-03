@@ -5,35 +5,51 @@ async function loadUsers() {
     const res = await fetch("http://localhost:8080/api/user/");
     const data = await res.json();
 
-    console.log(data)
+    const main = document.querySelector(".container-main")
+    const list = document.querySelector("#list");
+    document.querySelector(".users").classList.remove("d-none")
+    main.classList.add("d-none")
+    list.innerHTML = "";
 
-    /*  const list = document.querySelector("#list");
-     list.innerHTML = ""; */
-
-    /* if (Object.keys(data.data).length !== 0) {
+    if (Object.keys(data.data).length !== 0) {
         const divs = document.querySelectorAll(".Users")
         divs.forEach(d => {
             d.style.display = "block"
         })
-    } */
+    }
 
-    /*  Object.values(data.data).forEach(u => {
-         const li = document.createElement("li");
-         li.id = u.ID;
-         li.innerText = u.Firstname;
- 
-         li.addEventListener("click", () => {
-             selectedID = u.ID;
-         });
- 
-         list.appendChild(li);
-     }); */
+    Object.values(data.data).forEach(u => {
+        const li = document.createElement("li");
+        li.id = u.ID;
+        li.innerText = u.Firstname;
+
+        li.addEventListener("click", () => {
+            selectedID = u.ID;
+        });
+
+        list.appendChild(li);
+    });
 }
+
+document.querySelector("#returnList").addEventListener("click", (e) => {
+    e.preventDefault()
+    document.querySelector(".container-main").classList.add("d-block")
+    document.querySelector(".users").classList.add("d-none")
+    document.querySelector(".container-main").classList.remove("d-none")
+})
 
 function UserForm() {
     document.querySelector(".container-main").classList.add("d-none")
-    document.querySelector(".addUser").style.display = "block"
+    document.querySelector(".container-add").classList.add("d-block")
+    document.querySelector(".container-add").classList.remove("d-none")
 }
+
+document.querySelector("#return").addEventListener("click", (e) => {
+    e.preventDefault()
+    document.querySelector(".container-main").classList.add("d-block")
+    document.querySelector(".container-add").classList.add("d-none")
+    document.querySelector(".container-main").classList.remove("d-none")
+})
 
 document.querySelector("#UserForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -50,11 +66,10 @@ document.querySelector("#UserForm").addEventListener("submit", async (e) => {
     });
 
     e.target.reset()
-    loadUsers();
 });
 
 
-/* document.querySelector("#EditForm").addEventListener("submit", async (e) => {
+document.querySelector("#EditForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const data = {
@@ -114,4 +129,3 @@ document.querySelector("#SearchForm").addEventListener("submit", async (e) => {
     listInfo.appendChild(li2)
     listInfo.appendChild(li3)
 })
- */
