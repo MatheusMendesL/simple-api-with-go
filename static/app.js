@@ -38,6 +38,20 @@ document.querySelector("#returnList").addEventListener("click", (e) => {
     document.querySelector(".container-main").classList.remove("d-none")
 })
 
+document.querySelector("#search").addEventListener("click", (e) => {
+    e.preventDefault()
+    document.querySelector(".container-search").classList.remove("d-none")
+    document.querySelector(".container-main").classList.add("d-none")
+})
+
+document.querySelector("#returnSearch").addEventListener("click", (e) => {
+    e.preventDefault()
+    document.querySelector(".container-main").classList.add("d-block")
+    document.querySelector(".container-search").classList.add("d-none")
+    document.querySelector(".container-main").classList.remove("d-none")
+})
+
+
 function UserForm() {
     document.querySelector(".container-main").classList.add("d-none")
     document.querySelector(".container-add").classList.add("d-block")

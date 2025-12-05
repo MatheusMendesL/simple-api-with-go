@@ -17,7 +17,7 @@
             <div class="col d-flex flex-column gap-3">
                 <button class="btn btn-primary" id="list_users">List users</button>
                 <button class="btn btn-secondary" id="add_user">Add an user</button>
-                <button class="btn btn-light">Search an user by name</button>
+                <button class="btn btn-light" id="search">Search an user by name</button>
             </div>
         </div>
     </div>
@@ -25,23 +25,28 @@
 
 
     <div class="users d-none bg-dark d-flex justify-content-center align-items-center">
-        <h1 class="text-light">Choose one user to edit!</h1>
-        <ul id="list" class="text-light">
+        <div class="row d-block">
+            <h1 class="text-light">Choose one user to edit!</h1>
+            <ul id="list" class="text-light">
 
-        </ul>
+            </ul>
 
-        <form id="EditForm">
-            <input type="text" placeholder="First Name" name="FirstName">
-            <input type="text" placeholder="Last Name" name="LastName">
-            <input type="text" placeholder="Biography" name="Biography">
-            <button type="submit" id="edit">Edit</button>
-        </form>
+            <form id="EditForm">
+                <input type="text" placeholder="First Name" name="FirstName" class="form-control">
+                <input type="text" placeholder="Last Name" name="LastName" class="form-control">
+                <input type="text" placeholder="Biography" name="Biography" class="form-control">
+                <button type="submit" id="edit" class="btn btn-secondary">Edit</button>
+            </form>
 
 
-        <h1 class="text-light">Click in one of the names and here to delete</h1>
+            <h1 class="text-light">Click in one of the names and here to delete</h1>
+            <div class="gap-10">
+                <button id="Delete" class="btn btn-warning">Delete</button>
+                <button id="returnList" class="btn btn-danger">Return</button>
+            </div>
 
-        <button id="Delete">Delete</button>
-        <div class="d-block"><button id="returnList" class="btn btn-danger">Return</button></div>
+        </div>
+
     </div>
 
     <div class="d-none container-fluid container-add bg-dark d-flex justify-content-center align-items-center">
@@ -63,16 +68,20 @@
         </div>
     </div>
 
-    <div class="SearchUser" style="display: none;">
-        <h1>To search one user, write his name</h1>
-        <form id="SearchForm">
-            <input type="text" placeholder="Name" name="FirstName">
-            <button type="submit" id="search">Search</button>
-        </form>
+    <div class="d-none container-fluid container-search bg-dark d-flex justify-content-center align-items-center">
+        <div class="row d-block">
+            <h1 class="text-light">To search one user, write his name</h1>
+            <form id="SearchForm">
+                <input type="text" placeholder="Name" name="FirstName" class="form-control">
+                <button type="submit" id="search" class="btn btn-secondary">Search</button>
+            </form>
 
-        <ul id="listInfo">
+            <ul id="listInfo" class="text-light">
 
-        </ul>
+            </ul>
+
+            <button class="btn btn-danger mt-2 w-50" id="returnSearch">Return</button>
+        </div>
     </div>
 </body>
 

@@ -3,6 +3,6 @@
     margin: 0;
 }
 
-.container-main, .container-add, .users{
+.container-main, .container-add, .users, .container-search{
     height: 100vh !important;
 }
