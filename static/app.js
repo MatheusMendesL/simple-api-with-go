@@ -22,6 +22,7 @@ async function loadUsers() {
         const li = document.createElement("li");
         li.id = u.ID;
         li.innerText = u.Firstname;
+        li.style = "cursor:pointer;"
 
         li.addEventListener("click", () => {
             selectedID = u.ID;
