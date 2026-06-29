@@ -2,13 +2,16 @@ package db
 
 import (
 	"database/sql"
+	"os"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 func Conn() (*sql.DB, *Queries, error) {
-	db, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/apitest")
+	dsn := os.Getenv("DATABASE_URL")
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, nil, err
 	}

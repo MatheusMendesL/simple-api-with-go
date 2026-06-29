@@ -7,15 +7,11 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
-const createUser = `-- name: CreateUser :execresult
-INSERT INTO user (
-  Firstname, LastName, Biography
-) VALUES (
-  ?, ?, ?
-)
+const createUser = `-- name: CreateUser :exec
+INSERT INTO "user" (Firstname, LastName, Biography)
+VALUES ($1, $2, $3)
 `
 
 type CreateUserParams struct {
@@ -24,13 +20,15 @@ type CreateUserParams struct {
 	Biography string
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createUser, arg.Firstname, arg.Lastname, arg.Biography)
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
+	_, err := q.db.ExecContext(ctx, createUser, arg.Firstname, arg.Lastname, arg.Biography)
+	return err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM user
-WHERE ID = ?
+DELETE
+FROM "user"
+WHERE ID = $1
 `
 
 func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
@@ -39,25 +37,26 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, firstname, lastname, biography FROM user
-WHERE ID = ? LIMIT 1
+SELECT id, firstname, lastname, biography
+FROM "user"
+WHERE ID = $1 LIMIT 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
-
-	scan := []any{&i.ID,
+	err := row.Scan(
+		&i.ID,
 		&i.Firstname,
 		&i.Lastname,
-		&i.Biography}
-
-	err := row.Scan(scan...)
+		&i.Biography,
+	)
 	return i, err
 }
 
 const listUser = `-- name: ListUser :many
-SELECT id, firstname, lastname, biography FROM user
+SELECT id, firstname, lastname, biography
+FROM "user"
 ORDER BY Firstname
 `
 
@@ -70,17 +69,14 @@ func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		scan := []any{&i.ID,
+		if err := rows.Scan(
+			&i.ID,
 			&i.Firstname,
 			&i.Lastname,
-			&i.Biography}
-
-		if err := rows.Scan(
-			scan...,
+			&i.Biography,
 		); err != nil {
 			return nil, err
 		}
-
 		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
@@ -92,10 +88,30 @@ func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const searchByName = `-- name: SearchByName :one
+SELECT id, firstname, lastname, biography
+FROM "user"
+WHERE Firstname = $1
+`
+
+func (q *Queries) SearchByName(ctx context.Context, firstname string) (User, error) {
+	row := q.db.QueryRowContext(ctx, searchByName, firstname)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Firstname,
+		&i.Lastname,
+		&i.Biography,
+	)
+	return i, err
+}
+
 const updateUser = `-- name: UpdateUser :exec
-UPDATE user 
-SET Firstname = ?, LastName = ?, Biography = ?
-WHERE ID = ?
+UPDATE "user"
+SET Firstname = $1,
+    LastName  = $2,
+    Biography = $3
+WHERE ID = $4
 `
 
 type UpdateUserParams struct {
@@ -113,20 +129,4 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 		arg.ID,
 	)
 	return err
-}
-
-const searchByName = `-- name: SearchByName :one
-SELECT id, firstname, lastname, biography FROM user WHERE Firstname = ?
-`
-
-func (q *Queries) SearchByName(ctx context.Context, firstname string) (User, error) {
-	row := q.db.QueryRowContext(ctx, searchByName, firstname)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Firstname,
-		&i.Lastname,
-		&i.Biography,
-	)
-	return i, err
 }
