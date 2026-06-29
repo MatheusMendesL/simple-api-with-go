@@ -2,14 +2,23 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 func Conn() (*sql.DB, *Queries, error) {
 
-	db, err := sql.Open("postgres", "postgresql://neondb_owner:npg_r92qGLSQEMlg@ep-empty-tooth-ac925cgm-pooler.sa-east-1.aws.neon.tech/go-project?sslmode=require&channel_binding=require")
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Arquivo .env não encontrado, usando variáveis de ambiente.")
+	}
+
+	dsn := os.Getenv("DATABASE_URL")
+
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, nil, err
 	}
