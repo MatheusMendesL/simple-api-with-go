@@ -89,14 +89,10 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := queries.CreateUser(ctx, db.CreateUserParams{
+	res := queries.CreateUser(ctx, db.CreateUserParams{
 		Firstname: user.Firstname,
 		Lastname:  user.Lastname,
 		Biography: user.Biography})
-	if err != nil {
-		helper.Response(helper.Response_struct{Error: "failed to add user"}, w, http.StatusInternalServerError)
-		return
-	}
 
 	helper.Response(helper.Response_struct{Data: res}, w, http.StatusCreated)
 }
