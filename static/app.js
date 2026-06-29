@@ -2,7 +2,7 @@ document.querySelector("#list_users").addEventListener("click", loadUsers)
 document.querySelector("#add_user").addEventListener("click", UserForm)
 
 async function loadUsers() {
-    const res = await fetch("http://localhost:8080/api/user/");
+    const res = await fetch("http://147.15.53.15:8080/api/user/");
     const data = await res.json();
 
     const main = document.querySelector(".container-main")
@@ -75,7 +75,7 @@ document.querySelector("#UserForm").addEventListener("submit", async (e) => {
         Biography: e.target.Biography.value
     };
 
-    await fetch("http://localhost:8080/api/user/", {
+    await fetch("http://147.15.53.15:8080/api/user/", {
         method: "POST",
         body: JSON.stringify(data)
     });
@@ -93,7 +93,7 @@ document.querySelector("#EditForm").addEventListener("submit", async (e) => {
         Biography: e.target.Biography.value
     };
 
-    await fetch("http://localhost:8080/api/user/" + selectedID, {
+    await fetch("http://147.15.53.15:8080/api/user/" + selectedID, {
         method: "PUT",
         body: JSON.stringify(data)
     });
@@ -104,7 +104,7 @@ document.querySelector("#EditForm").addEventListener("submit", async (e) => {
 document.querySelector("#Delete").addEventListener("click", async () => {
     if (!selectedID) return;
 
-    await fetch("http://localhost:8080/api/user/" + selectedID, {
+    await fetch("http://147.15.53.15:8080/api/user/" + selectedID, {
         method: "DELETE"
     });
 
@@ -118,7 +118,7 @@ document.querySelector("#SearchForm").addEventListener("submit", async (e) => {
     var Firstname = e.target.FirstName.value
 
 
-    const res = await fetch("http://localhost:8080/api/user/search/" + Firstname)
+    const res = await fetch("http://147.15.53.15:8080/api/user/search/" + Firstname)
 
     const result = await res.json()
 

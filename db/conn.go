@@ -2,16 +2,14 @@ package db
 
 import (
 	"database/sql"
-	"os"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 
 func Conn() (*sql.DB, *Queries, error) {
-	dsn := os.Getenv("DATABASE_URL")
 
-	db, err := sql.Open("postgres", dsn)
+	db, err := sql.Open("postgres", "postgresql://neondb_owner:npg_r92qGLSQEMlg@ep-empty-tooth-ac925cgm-pooler.sa-east-1.aws.neon.tech/go-project?sslmode=require&channel_binding=require")
 	if err != nil {
 		return nil, nil, err
 	}
